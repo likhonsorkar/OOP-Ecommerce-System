@@ -1,17 +1,30 @@
+from abc import ABC, abstractmethod
 ALL_PRODUCTS = []
-class Product:
+#Abstraction ===============================================
+class BaseProduct(ABC):
+    @abstractmethod
+    def display_info(self):
+        pass
+class Product(BaseProduct):
     def __init__(self, name, price):
         self.name = name
-        self.__price = price #Encapsulation 
+        #Encapsulation =====================================
+        self.__price = price
         ALL_PRODUCTS.append(self)
     @property
     def price(self):
         return self.__price
-#inheritance
+    # Polymorphism & Method Overriding =====================
+    def display_info(self):
+        return f"{self.name} - {self.price} TK"
+#Inheritance ===============================================
 class WarrantyProduct(Product):
     def __init__(self, name, price, warranty):
         super().__init__(name, price)
         self.warranty = warranty
+    # Method Overriding: with warentry =====================
+    def display_info(self):
+        return f"{self.name} ({self.warranty}y Warranty) - {self.price} TK"
 class Cart:
     def __init__(self):
         self.items = {}
@@ -44,8 +57,7 @@ def show_all_products():
     print(f"SL. Product Name - Price ")
     counter = 1
     for product in ALL_PRODUCTS:
-        warranty_info = f" ({product.warranty}y Warranty)" if hasattr(product, 'warranty') else ""
-        print(f"{counter}. {product.name} - {product.price} TK {warranty_info}")
+        print(f"{counter}. {product.display_info()}")
         counter += 1
     print("\n --------------- End Products List -----------------")
 
