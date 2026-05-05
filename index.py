@@ -57,7 +57,7 @@ class Cart:
     def checkout(self):
         if self.show_cart():
             if input("\nCheckout? (y/n): ").lower() == 'y':
-                print("Order processed by AI. Thank you!")
+                print("Order processed. Thank you!")
                 self.items = {}
 def admin_menu():
     while True:
@@ -87,7 +87,7 @@ def customer_menu():
 Product("Laptop", 50000)
 WarrantyProduct("Neural Chip", 25000, "1")
 while True:
-    print("\n" + "===== AI CHANGES THE POSSIBILITIES IN CODE =====")
+    print("\n" + "===== E-commerce Menu =====")
     print("1. Admin\n2. Customer\n99. Exit")
     role = input("Access: ")
     if role == '1': admin_menu()
