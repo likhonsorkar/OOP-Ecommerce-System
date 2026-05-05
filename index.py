@@ -1,91 +1,95 @@
 from abc import ABC, abstractmethod
 ALL_PRODUCTS = []
-#Abstraction ===============================================
+# 1. Abstraction: Blueprint for products
 class BaseProduct(ABC):
     @abstractmethod
     def display_info(self):
         pass
+# 2. Encapsulation: Private __price and public property access
 class Product(BaseProduct):
     def __init__(self, name, price):
         self.name = name
-        #Encapsulation =====================================
-        self.__price = price
+        self.__price = price # Private attribute
         ALL_PRODUCTS.append(self)
     @property
     def price(self):
-        return self.__price
-    # Polymorphism & Method Overriding =====================
+        return self.__price 
+    @price.setter
+    def price(self, new_price):
+        if new_price > 0:
+            self.__price = new_price
+    # 3. Polymorphism: Shared method name with unique behavior
     def display_info(self):
         return f"{self.name} - {self.price} TK"
-#Inheritance ===============================================
+# 4. Inheritance: WarrantyProduct inherits from Product
 class WarrantyProduct(Product):
     def __init__(self, name, price, warranty):
         super().__init__(name, price)
         self.warranty = warranty
-    # Method Overriding: with warentry =====================
-    def display_info(self):
+    def display_info(self): # Method Overriding
         return f"{self.name} ({self.warranty}y Warranty) - {self.price} TK"
+def show_all_products():
+    if not ALL_PRODUCTS:
+        print("\nInventory empty.")
+        return False
+    print("\n--- Products ---")
+    for i, p in enumerate(ALL_PRODUCTS, 1):
+        print(f"{i}. {p.display_info()}")
+    return True
 class Cart:
     def __init__(self):
         self.items = {}
     def add_item(self, product):
-        if product in self.items:
-            self.items[product] += 1
-        else:
-            self.items[product] = 1
-        print(f"{product.name} is added to cart")
+        self.items[product] = self.items.get(product, 0) + 1
+        print(f"{product.name} added.")
     def show_cart(self):
         if not self.items:
-            print("\nYour cart is empty!")
-            return
-        print("\n ================== YOUR CART ====================")
-        print("SL. Name(Warranty)\t Price \tQTY\tNetPrice ")
+            print("\nCart empty.")
+            return False
         total = 0
-        counter = 1
-        for product in self.items:
-            warranty_info = f" (YES)" if hasattr(product, 'warranty') else "NO"
-            qty = self.items[product]
-            net = product.price * qty
+        print("\n--- Cart ---")
+        for p, qty in self.items.items():
+            net = p.price * qty
             total += net
-            print(f"{counter}.{product.name}{warranty_info}\t \t{product.price}\t{qty} \t{net}")
-            counter += 1
-        print("---------------------------------------------------")
-        print(f"\t \t \t \tTotal: {total} TK")
-
-def show_all_products():
-    print("\n --------------- All Products List -----------------")
-    print(f"SL. Product Name - Price ")
-    counter = 1
-    for product in ALL_PRODUCTS:
-        print(f"{counter}. {product.display_info()}")
-        counter += 1
-    print("\n --------------- End Products List -----------------")
-
-p1 = Product("Laptop", 50000)
-p2 = WarrantyProduct("Mouse", 1200 , 1)
-p3 = Product("Keyboard", 2500)
-my_cart = Cart()
-
+            print(f"{p.name} x{qty} = {net} TK")
+        print(f"Total: {total} TK")
+        return True
+    def checkout(self):
+        if self.show_cart():
+            if input("\nCheckout? (y/n): ").lower() == 'y':
+                print("Order processed by AI. Thank you!")
+                self.items = {}
+def admin_menu():
+    while True:
+        print("\n--- Admin ---")
+        print("1. Add Regular\n2. Add Warranty\n4. Update\n5. Delete\n99. Exit")
+        c = input("Choice: ")
+        if c == '1': Product(input("Name: "), float(input("Price: ")))
+        elif c == '2': WarrantyProduct(input("Name: "), float(input("Price: ")), int(input("Warranty: ")))
+        elif c in ['4', '5']:
+            if show_all_products():
+                idx = int(input("Index: ")) - 1
+                if c == '4': ALL_PRODUCTS[idx].price = float(input("Price: "))
+                else: ALL_PRODUCTS.pop(idx)
+        elif c == '99': break
+def customer_menu():
+    cart = Cart()
+    while True:
+        print("\n--- Store ---")
+        print("1. Browse\n2. Cart\n3. Checkout\n99. Exit")
+        c = input("Choice: ")
+        if c == '1':
+            if show_all_products():
+                cart.add_item(ALL_PRODUCTS[int(input("Index: ")) - 1])
+        elif c == '2': cart.show_cart()
+        elif c == '3': cart.checkout()
+        elif c == '99': break
+Product("Laptop", 50000)
+WarrantyProduct("Neural Chip", 25000, "1")
 while True:
-    print("\n ---------------- E-commerce Menu ------------------ ")
-    print("1. Add To Cart")
-    print("2. Show Cart")
-    print("99. Exit ")
-    choice = input("Enter your choice: ")
-    if choice == '99' :
-        break
-    elif choice == '1':
-        show_all_products()
-        try:
-            pchoice = int(input("Enter your choice: "))
-            if 1<= pchoice <= len(ALL_PRODUCTS):
-                selectedproduct = ALL_PRODUCTS[pchoice - 1]
-                my_cart.add_item(selectedproduct)
-            else:
-                print("Invalid product number!")
-        except ValueError:
-            print("Please enter a valid number!")
-    elif choice == '2':
-        my_cart.show_cart()
-
-    
+    print("\n" + "===== AI CHANGES THE POSSIBILITIES IN CODE =====")
+    print("1. Admin\n2. Customer\n99. Exit")
+    role = input("Access: ")
+    if role == '1': admin_menu()
+    elif role == '2': customer_menu()
+    elif role == '99': break
