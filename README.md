@@ -1,6 +1,6 @@
 # OOP E-Commerce System
 
-![Application Screenshot](img/screenshot.png)
+![Application Screenshot](https://github.com/likhonsorkar/OOP-Ecommerce-System/blob/main/img/screenshot.PNG)
 
 *Note: Please run the app, take a screenshot, and save it as `screenshot.png` inside the `img/` folder to display it here.*
 
